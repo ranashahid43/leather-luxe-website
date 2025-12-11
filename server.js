@@ -60,11 +60,20 @@ app.post('/api/signup', (req, res) => {
 });
 
 // Serve the website
+// Serve the website - works on Render and localhost
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
+    if (err) {
+      res.sendFile(path.join(__dirname, 'src', 'public', 'index.html'));
+    }
+  });
 });
 
 app.listen(port, () => {
+  console.log(`Leather Luxe Shop is LIVE on port ${port}`);
+});
+app.listen(port, () => {
   console.log(`Leather Luxe Shop is LIVE at http://localhost:${port}`);
   console.log(`Open this link in browser to see your shop!`);
+
 });
