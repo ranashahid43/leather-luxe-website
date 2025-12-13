@@ -2,13 +2,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
-const port = process.env.PORT || 3000;  // Render sets PORT automatically (default 10000)
+const port = process.env.PORT || 3000;  // Critical: Use Render's PORT
 
 // Middleware
 app.use(bodyParser.json());
-app.use(express.static('public')); // Serve all files from /public
 
-// Sample Products (same as frontend)
+// Serve static files from 'public' folder (absolute path for Render)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Sample Products
 let products = [
   { id: 1, name: 'Black Leather Jacket', price: 199.99, category: 'jackets', img: 'https://placehold.co/300x400?text=Black+Jacket', description: 'Premium black leather jacket' },
   { id: 2, name: 'Brown Leather Shoes', price: 89.99, category: 'shoes', img: 'https://placehold.co/300x400?text=Brown+Shoes', description: 'Comfortable leather shoes' },
@@ -16,9 +18,9 @@ let products = [
   { id: 4, name: 'Leather Wallet', price: 29.99, category: 'ladies', img: 'https://placehold.co/300x400?text=Wallet', description: 'Genuine leather wallet' }
 ];
 
-// Fake user database (in memory)
+// Fake user database & cart (in memory)
 let users = [];
-let cart = []; // Shared cart for demo (in real app: per user)
+let cart = [];
 
 // API Routes
 app.get('/api/products', (req, res) => {
@@ -59,22 +61,12 @@ app.post('/api/signup', (req, res) => {
   }
 });
 
-// Serve the website
-// Serve the website - works on Render and localhost
+// Catch-all route: Serve index.html for all non-API routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
-    if (err) {
-      res.sendFile(path.join(__dirname, 'src', 'public', 'index.html'));
-    }
-  });
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Start server ONLY ONCE
 app.listen(port, () => {
   console.log(`Leather Luxe Shop is LIVE on port ${port}`);
 });
-app.listen(port, () => {
-  console.log(`Leather Luxe Shop is LIVE at http://localhost:${port}`);
-  console.log(`Open this link in browser to see your shop!`);
-
-});
-
